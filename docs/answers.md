@@ -56,3 +56,33 @@ identique. C’est toutefois une mauvaise pratique : React ne traite plus
 `CardTile` comme un composant dans l’arbre de rendu. On perd notamment la
 gestion normale du cycle de vie, des hooks et des erreurs ; les composants
 doivent être utilisés avec la syntaxe JSX `<CardTile />`.
+
+### Q3.1
+Sans la prop `card`, le composant est bien accepté par JavaScript et JSX, mais
+`CardTile` tente ensuite de lire `card.rarity`, `card.name`, etc. sur
+`undefined`. Une erreur apparaît donc au moment de l’affichage, lors de
+l’exécution du composant, et non pendant l’écriture du code ni simplement au
+lancement de l’application. La console indique généralement qu’une propriété
+ne peut pas être lue sur `undefined`.
+
+### Q3.2
+Dans `RarityBadge`, `label = rarity` est une valeur par défaut appliquée lors
+de la déstructuration des props. Si aucune prop `label` n’est fournie, le
+badge affiche donc la valeur de `rarity`. Si l’on écrit
+`label="Légendaire"`, cette valeur remplace la valeur par défaut et le badge
+affiche « Légendaire ».
+
+### Q3.3
+`card` est une prop reçue par le composant et les données de la collection
+doivent être traitées comme immuables. Modifier `card.name` directement
+modifie l’objet partagé, peut produire des effets de bord et contourne le
+modèle de mise à jour de React. Il faut créer une nouvelle valeur ou mettre à
+jour l’état avec les mécanismes prévus par React.
+
+### Q3.4
+`children` est une prop spéciale qui contient le contenu placé entre la balise
+ouvrante et la balise fermante d’un composant, ici le contenu de
+`<Panel>...</Panel>`. Cela permet à `Panel` d’être un conteneur réutilisable
+pour n’importe quel JSX : une grille, un formulaire ou plusieurs éléments,
+sans devoir prévoir une prop spécifique comme `body` ni limiter le contenu à
+une structure prédéfinie.

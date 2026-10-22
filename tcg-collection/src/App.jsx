@@ -1,5 +1,6 @@
 import './index.css'
 import CardTile from './components/CardTile.jsx'
+import Panel from './components/Panel.jsx'
 import {
   SAMPLE_CARDS,
   collectionValue,
@@ -7,7 +8,7 @@ import {
   formatPrice,
 } from './domain/card.js'
 
-console.log('Élément :', <CardTile />)
+console.log('Élément avec props :', <CardTile card={SAMPLE_CARDS[0]} />)
 
 function App() {
   return (
@@ -18,11 +19,13 @@ function App() {
         {SAMPLE_CARDS.length} cartes · {copyCount(SAMPLE_CARDS)} exemplaires ·{' '}
         {formatPrice(collectionValue(SAMPLE_CARDS))}
       </p>
-      <div className="grid">
-        <CardTile />
-        <CardTile />
-        <CardTile />
-      </div>
+      <Panel title="Mes cartes">
+        <div className="grid">
+          <CardTile card={SAMPLE_CARDS[0]} />
+          <CardTile card={SAMPLE_CARDS[1]} />
+          <CardTile card={SAMPLE_CARDS[2]} />
+        </div>
+      </Panel>
     </main>
   )
 }
