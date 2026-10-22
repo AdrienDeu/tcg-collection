@@ -1,22 +1,10 @@
-import { useState } from 'react'
-
-function QuantityControl({ initialQuantity }) {
-  const [quantity, setQuantity] = useState(initialQuantity)
-
-  function handleDecrement() {
-    setQuantity((currentQuantity) => Math.max(0, currentQuantity - 1))
-  }
-
-  function handleIncrement() {
-    setQuantity((currentQuantity) => currentQuantity + 1)
-  }
-
+function QuantityControl({ quantity, onChange }) {
   return (
     <div className="quantity-control">
       <button
         type="button"
         aria-label="Retirer un exemplaire"
-        onClick={handleDecrement}
+        onClick={() => onChange(-1)}
         disabled={quantity === 0}
       >
         −
@@ -25,7 +13,7 @@ function QuantityControl({ initialQuantity }) {
       <button
         type="button"
         aria-label="Ajouter un exemplaire"
-        onClick={handleIncrement}
+        onClick={() => onChange(1)}
       >
         +
       </button>

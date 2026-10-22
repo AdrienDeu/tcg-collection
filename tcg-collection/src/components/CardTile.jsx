@@ -1,8 +1,7 @@
 import { formatPrice, isRare } from '../domain/card.js'
 import RarityBadge from './RarityBadge.jsx'
-import QuantityControl from './QuantityControl.jsx'
 
-function CardTile({ card }) {
+function CardTile({ card, children }) {
   return (
     <article className={`card-tile rarity-${card.rarity}`}>
       <h3>{card.name}</h3>
@@ -13,7 +12,7 @@ function CardTile({ card }) {
         <p className="sold-out">Plus aucun exemplaire</p>
       )}
       <p className="price">{formatPrice(card.price)}</p>
-      <QuantityControl initialQuantity={card.quantity} />
+      {children && <div className="actions">{children}</div>}
     </article>
   )
 }
