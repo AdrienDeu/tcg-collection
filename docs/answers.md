@@ -216,3 +216,45 @@ bord exécuté pendant le rendu. Le rendu doit rester déclaratif et sans effet
 externe ; React peut rendre plusieurs fois ou abandonner un rendu. `useEffect`
 exécute cette synchronisation après le rendu, avec des dépendances explicites
 et un comportement prévisible.
+
+### Q9.1
+`useEffect` attend une fonction d’effet qui peut éventuellement renvoyer une
+fonction de nettoyage, pas une promesse. Une fonction `async` renvoie toujours
+une promesse ; React ne pourrait donc pas l’interpréter comme le cleanup.
+Il faut appeler la fonction asynchrone dans l’effet et gérer la promesse avec
+`.then()`/`.catch()`, ou avec une fonction interne `async`.
+
+### Q9.2
+Avec l’URL `/cardz`, le serveur répond normalement avec une erreur HTTP 404,
+qui est affichée par l’application sous la forme `HTTP 404`. Sans le test
+`!response.ok`, `fetch` considérerait quand même la réponse comme réussie,
+puis `response.json()` pourrait échouer ou fournir une structure inattendue
+au lieu de signaler clairement l’échec HTTP.
+
+### Q9.3
+En développement avec `StrictMode`, deux requêtes `cards` peuvent partir au
+chargement : React monte l’effet, exécute son cleanup, puis le remonte pour
+détecter les effets mal nettoyés. Ce n’est pas un bug et ce comportement de
+vérification ne concerne pas la production. Le drapeau `ignore` empêche la
+première requête de mettre à jour l’état après son cleanup.
+
+### Q9.4
+Supposons qu’une recherche ou un identifiant change alors qu’une première
+requête est encore en vol. Si la requête la plus ancienne répond après la
+nouvelle, elle pourrait écraser l’état avec des données obsolètes. Le cleanup
+met `ignore` à `true` pour l’ancien effet ; sa réponse est alors ignorée et
+seule la requête correspondant aux paramètres actuels peut mettre à jour
+l’état.
+
+### Q9.5
+ESLint signale une violation des règles des Hooks, car le `useEffect` serait
+appelé après un `return` conditionnel. Selon le chemin d’exécution, les Hooks
+ne seraient pas appelés dans le même ordre à chaque rendu. React exige qu’ils
+restent au niveau supérieur du composant, avant les retours anticipés.
+
+### Q9.6
+Un state unique avec `status` représente explicitement les états valides de la
+requête et associe les données nécessaires à chacun. Trois states séparés
+pourraient produire des combinaisons incohérentes, par exemple
+`isLoading === true` avec `error !== null` et une ancienne liste `cards`
+simultanément. La forme discriminée rend ces états absurdes impossibles.
