@@ -1,10 +1,14 @@
 import './index.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import CardGrid from './components/CardGrid.jsx'
 import Panel from './components/Panel.jsx'
 import { SearchBar } from './components/SearchBar.jsx'
 import Summary from './components/Summary.jsx'
-import { SAMPLE_CARDS } from './domain/card.js'
+import {
+  SAMPLE_CARDS,
+  collectionValue,
+  formatPrice,
+} from './domain/card.js'
 
 function App() {
   const [cards, setCards] = useState(SAMPLE_CARDS)
@@ -41,6 +45,11 @@ function App() {
 
     return matchesQuery && matchesRarity
   })
+  const value = collectionValue(cards)
+
+  useEffect(() => {
+    document.title = `Ma collection (${formatPrice(value)})`
+  }, [value])
 
   return (
     <main className="App">

@@ -181,3 +181,38 @@ Oui, le titre reste juste. `visibleCards` est recalculé à chaque rendu à
 partir de `cards`, et le retrait d’une carte met à jour `cards` dans `App`.
 La liste filtrée et les compteurs du titre sont donc automatiquement
 recalculés ; aucun code spécifique au filtre n’est nécessaire.
+
+### Q8.1
+En développement, `StrictMode` de React simule un cycle supplémentaire pour
+détecter les effets qui ne sont pas correctement nettoyés : l’effet est
+installé, son cleanup est exécuté, puis l’effet est installé à nouveau. En
+production, cette double vérification de montage ne se produit pas ; l’effet
+est installé une seule fois.
+
+### Q8.2
+Sans le cleanup, chaque installation ajoute un nouvel écouteur sans retirer
+l’ancien. Avec le cycle de développement de `StrictMode`, le message
+« Échap » s’afficherait alors deux fois pour une seule touche. Le cleanup
+évite l’accumulation d’écouteurs, les traitements en double et les fuites de
+ressources.
+
+### Q8.3
+Avec un tableau de dépendances vide, le titre est défini seulement au
+montage et ne suit plus les changements de `value`. ESLint signale que
+`value` est utilisé dans l’effet mais absent de ses dépendances. Sans tableau
+de dépendances, l’effet s’exécute après chaque rendu, ce qui resynchronise le
+titre mais effectue du travail inutile.
+
+### Q8.4
+`value` est entièrement dérivée de `cards`, donc la stocker dupliquerait une
+information déjà disponible. Un state mis à jour dans un effet introduirait
+un rendu intermédiaire avec une valeur ancienne et pourrait devenir
+désynchronisé si une mise à jour est oubliée ; le calcul direct est toujours
+cohérent et plus simple.
+
+### Q8.5
+Modifier le titre directement dans le corps du composant est un effet de
+bord exécuté pendant le rendu. Le rendu doit rester déclaratif et sans effet
+externe ; React peut rendre plusieurs fois ou abandonner un rendu. `useEffect`
+exécute cette synchronisation après le rendu, avec des dépendances explicites
+et un comportement prévisible.
