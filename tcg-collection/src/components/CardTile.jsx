@@ -1,4 +1,4 @@
-import { formatPrice } from '../domain/card.js'
+import { formatPrice, isRare } from '../domain/card.js'
 import RarityBadge from './RarityBadge.jsx'
 
 function CardTile({ card }) {
@@ -7,6 +7,12 @@ function CardTile({ card }) {
       <h3>{card.name}</h3>
       <RarityBadge rarity={card.rarity} />
       <p className="meta">{card.set}</p>
+      {isRare(card) && <p className="highlight">★ Carte rare</p>}
+      {card.quantity > 0 ? (
+        <p className="meta">× {card.quantity}</p>
+      ) : (
+        <p className="sold-out">Plus aucun exemplaire</p>
+      )}
       <p className="price">{formatPrice(card.price)}</p>
     </article>
   )

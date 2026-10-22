@@ -86,3 +86,33 @@ ouvrante et la balise fermante d’un composant, ici le contenu de
 pour n’importe quel JSX : une grille, un formulaire ou plusieurs éléments,
 sans devoir prévoir une prop spécifique comme `body` ni limiter le contenu à
 une structure prédéfinie.
+
+### Q4.1
+Sans `key`, React affiche un avertissement indiquant que chaque élément d’une
+liste doit avoir une prop `key` unique. La `key` permet à React d’identifier
+chaque élément entre deux rendus et de déterminer efficacement lesquels ont
+été ajoutés, supprimés ou déplacés.
+
+### Q4.2
+`key={card.id}` est préférable à `key={index}` car l’identifiant appartient à
+la carte et reste stable lorsque la liste est filtrée, triée ou réordonnée.
+L’index peut alors désigner une autre carte et provoquer des réutilisations
+incorrectes dans le rendu. L’index est acceptable pour une liste statique qui
+ne sera jamais réordonnée, ajoutée ou supprimée.
+
+### Q4.3
+Avec `{card.quantity && <p>...</p>}`, la tuile de Ptéra affiche `0` à
+l’endroit où l’on attendait le nombre d’exemplaires. En JavaScript, `0 &&
+element` renvoie `0`, et React affiche cette valeur. Il faut tester
+explicitement `card.quantity > 0`, ou utiliser un ternaire, afin que le cas
+zéro rende le message « Plus aucun exemplaire ».
+
+### Q4.4
+Avec `cards={[]}`, `CardGrid` effectue son early return et affiche :
+« Aucune carte à afficher. »
+
+### Q4.5
+Il faut utiliser `filter`, par exemple
+`SAMPLE_CARDS.filter((card) => isRare(card))`. Cette méthode crée un nouveau
+tableau contenant uniquement les cartes rares et ne modifie pas le tableau
+`SAMPLE_CARDS` d’origine.
