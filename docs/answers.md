@@ -150,3 +150,34 @@ Le résumé du header ne peut pas connaître les quantités des compteurs car
 chaque `QuantityControl` possède son propre état local. Cet état est isolé
 dans les composants enfants et n’est pas remonté vers `App`, qui calcule le
 résumé à partir de `SAMPLE_CARDS`.
+
+### Q7.1
+Le state `query` doit vivre dans `App` car il sert à la fois à contrôler
+`SearchBar` et à calculer `visibleCards` pour `CardGrid`. S’il vivait seulement
+dans `SearchBar`, `App` ne connaîtrait pas la recherche et la grille ne
+pourrait pas être filtrée correctement.
+
+### Q7.2
+`visibleCards` est une donnée dérivée de `cards`, `query` et `rarity`, donc il
+ne doit pas être stocké dans un `useState`. Sinon, après une modification d’un
+de ces états, on pourrait afficher une ancienne liste filtrée pendant qu’un
+nouveau rendu est calculé, ou devoir synchroniser plusieurs états et créer
+des incohérences. Le calcul direct garantit qu’il est toujours à jour.
+
+### Q7.3
+`setQuery` est déjà une fonction qui reçoit la nouvelle valeur et met à jour
+le state. `SearchBar` appelle `onQueryChange` avec `event.target.value`, ce
+qui correspond exactement à la signature attendue par `setQuery`. Il est
+donc possible de transmettre directement `onQueryChange={setQuery}`.
+
+### Q7.4
+La recherche porte sur `card.name` et `card.set`, après suppression des
+espaces autour et conversion en minuscules. Ainsi, la recherche
+« fossile » trouve les cartes dont l’extension est « Fossile », sans modifier
+les données originales.
+
+### Q7.5
+Oui, le titre reste juste. `visibleCards` est recalculé à chaque rendu à
+partir de `cards`, et le retrait d’une carte met à jour `cards` dans `App`.
+La liste filtrée et les compteurs du titre sont donc automatiquement
+recalculés ; aucun code spécifique au filtre n’est nécessaire.

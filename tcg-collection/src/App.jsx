@@ -2,11 +2,14 @@ import './index.css'
 import { useState } from 'react'
 import CardGrid from './components/CardGrid.jsx'
 import Panel from './components/Panel.jsx'
+import { SearchBar } from './components/SearchBar.jsx'
 import Summary from './components/Summary.jsx'
 import { SAMPLE_CARDS } from './domain/card.js'
 
 function App() {
   const [cards, setCards] = useState(SAMPLE_CARDS)
+  const [query, setQuery] = useState('')
+  const [rarity, setRarity] = useState('toutes')
 
   function handleQuantityChange(id, delta) {
     setCards((previous) =>
@@ -28,6 +31,17 @@ function App() {
     )
   }
 
+  const normalizedQuery = query.trim().toLowerCase()
+  const visibleCards = cards.filter((card) => {
+    const matchesQuery =
+      normalizedQuery === '' ||
+      card.name.toLowerCase().includes(normalizedQuery) ||
+      card.set.toLowerCase().includes(normalizedQuery)
+    const matchesRarity = rarity === 'toutes' || card.rarity === rarity
+
+    return matchesQuery && matchesRarity
+  })
+
   return (
     <main className="App">
       <header className="app-header">
@@ -37,9 +51,15 @@ function App() {
         </button>
       </header>
       <Summary cards={cards} />
-      <Panel title="Mes cartes">
+      <Panel title={`Mes cartes (${visibleCards.length} / ${cards.length})`}>
+        <SearchBar
+          query={query}
+          onQueryChange={setQuery}
+          rarity={rarity}
+          onRarityChange={setRarity}
+        />
         <CardGrid
-          cards={cards}
+          cards={visibleCards}
           onQuantityChange={handleQuantityChange}
           onRemove={handleRemove}
         />
