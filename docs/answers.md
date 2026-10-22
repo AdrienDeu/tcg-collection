@@ -116,3 +116,37 @@ Il faut utiliser `filter`, par exemple
 `SAMPLE_CARDS.filter((card) => isRare(card))`. Cette méthode crée un nouveau
 tableau contenant uniquement les cartes rares et ne modifie pas le tableau
 `SAMPLE_CARDS` d’origine.
+
+### Q5.1
+Avec une simple variable locale, le clic modifie la valeur pendant
+l’exécution du handler, mais ne déclenche pas de nouveau rendu React : l’écran
+ne se met donc pas à jour. De plus, lors d’un éventuel nouveau rendu, la
+variable est recréée avec `initialQuantity` et la modification est perdue.
+Le `state` est nécessaire pour conserver la valeur entre les rendus et
+demander à React de mettre l’interface à jour.
+
+### Q5.2
+`console.log(quantity)` affiche l’ancienne valeur. La mise à jour demandée par
+`setQuantity` est planifiée et React applique le nouvel état lors du rendu
+suivant ; la variable `quantity` du rendu courant ne change pas.
+
+### Q5.3
+Avec deux appels directs à `setQuantity(quantity + 1)`, la quantité augmente
+d’une seule unité : les deux appels calculent la même nouvelle valeur à partir
+du même état. Avec
+`setQuantity((q) => q + 1)` deux fois, chaque mise à jour fonctionnelle reçoit
+la valeur issue de la mise à jour précédente, donc la quantité augmente de
+deux unités.
+
+### Q5.4
+ESLint signale une violation de la règle des Hooks, et React peut produire un
+avertissement ou une erreur indiquant que le nombre ou l’ordre des Hooks a
+changé entre deux rendus. Les Hooks doivent être appelés au niveau supérieur
+du composant, toujours dans le même ordre, afin que React puisse associer
+chaque Hook au bon état.
+
+### Q5.5
+Le résumé du header ne peut pas connaître les quantités des compteurs car
+chaque `QuantityControl` possède son propre état local. Cet état est isolé
+dans les composants enfants et n’est pas remonté vers `App`, qui calcule le
+résumé à partir de `SAMPLE_CARDS`.
