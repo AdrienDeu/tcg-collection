@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { parseRarity, RARITIES, SETS } from '../domain/card.js'
 
 const EMPTY_DRAFT = {
@@ -35,6 +35,7 @@ function validate(draft) {
 function AddCardForm({ onAdd }) {
   const [draft, setDraft] = useState(EMPTY_DRAFT)
   const [submitted, setSubmitted] = useState(false)
+  const nameInputRef = useRef(null)
   const errors = validate(draft)
 
   function update(field, value) {
@@ -58,6 +59,7 @@ function AddCardForm({ onAdd }) {
     })
     setDraft(EMPTY_DRAFT)
     setSubmitted(false)
+    nameInputRef.current?.focus()
   }
 
   return (
@@ -65,6 +67,7 @@ function AddCardForm({ onAdd }) {
       <label>
         Nom
         <input
+          ref={nameInputRef}
           value={draft.name}
           onChange={(event) => update('name', event.target.value)}
         />

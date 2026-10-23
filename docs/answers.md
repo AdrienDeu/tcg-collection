@@ -352,3 +352,31 @@ issue de la liste officielle `RARITIES` et fournit une valeur sûre si la
 valeur reçue est invalide. Utiliser directement `event.target.value`
 permettrait d’introduire une rareté inconnue malgré le domaine et rendrait
 les données moins fiables.
+
+### Q13.1
+Au premier rendu, `inputRef.current` vaut `null`, car le nœud DOM n’est pas
+encore attaché à la ref pendant l’exécution du corps du composant. Dans
+`handleClear`, le rendu est déjà monté : `inputRef.current` contient alors
+l’élément `<input>`. La ref est affectée par React après la création du DOM et
+sa valeur reste disponible entre les rendus.
+
+### Q13.2
+Une ref est adaptée pour conserver une référence vers un nœud DOM sans
+déclencher de rendu lorsqu’elle change. Un state provoquerait un nouveau
+rendu inutile et sert plutôt à des données qui doivent modifier l’interface.
+
+### Q13.3
+Modifier `renders.current` ne provoque pas de rendu, contrairement à
+`setState`, donc un state ne peut pas être utilisé pour incrémenter puis
+observer ce compteur pendant le même rendu sans créer une boucle de rendus.
+Le compteur avance de 2 en 2 en développement parce que `StrictMode` exécute
+le rendu deux fois pour détecter les effets de bord. Modifier une ref pendant
+le rendu reste déconseillé, car le rendu doit rester pur.
+
+### Q13.4
+
+| Mécanisme | Survit aux rendus ? | Déclenche un rendu quand il change ? |
+|---|---|---|
+| Variable locale | Non, elle est recréée | Non |
+| `useRef` | Oui, dans `.current` | Non |
+| `useState` | Oui | Oui, via son setter |
