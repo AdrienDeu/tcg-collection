@@ -1,78 +1,25 @@
 import './index.css'
-import { useEffect, useState } from 'react'
-import { fetchCards } from './api/cards.js'
+import { useState } from 'react'
 import CardGrid from './components/CardGrid.jsx'
 import Panel from './components/Panel.jsx'
 import { SearchBar } from './components/SearchBar.jsx'
 import Summary from './components/Summary.jsx'
-import {
-  collectionValue,
-  formatPrice,
-} from './domain/card.js'
+import { collectionValue, formatPrice } from './domain/card.js'
+import { useCards } from './hooks/useCards.js'
+import { useDocumentTitle } from './hooks/useDocumentTitle.js'
 
 function App() {
-  const [state, setState] = useState({ status: 'loading' })
-  const [attempt, setAttempt] = useState(0)
+  const {
+    state,
+    retry,
+    changeQuantity,
+    removeCard,
+    resetQuantities,
+  } = useCards()
   const [query, setQuery] = useState('')
   const [rarity, setRarity] = useState('toutes')
 
-  useEffect(() => {
-    let ignore = false
-
-    fetchCards()
-      .then((loadedCards) => {
-        if (!ignore) {
-          setState({ status: 'success', cards: loadedCards })
-        }
-      })
-      .catch((error) => {
-        if (!ignore) {
-          setState({
-            status: 'error',
-            message: error instanceof Error ? error.message : String(error),
-          })
-        }
-      })
-
-    return () => {
-      ignore = true
-    }
-  }, [attempt])
-
   const cards = state.status === 'success' ? state.cards : []
-
-  function updateCards(transform) {
-    setState((previous) =>
-      previous.status === 'success'
-        ? { status: 'success', cards: transform(previous.cards) }
-        : previous,
-    )
-  }
-
-  function handleQuantityChange(id, delta) {
-    updateCards((previous) =>
-      previous.map((card) =>
-        card.id === id
-          ? { ...card, quantity: Math.max(0, card.quantity + delta) }
-          : card,
-      ),
-    )
-  }
-
-  function handleRemove(id) {
-    updateCards((previous) => previous.filter((card) => card.id !== id))
-  }
-
-  function handleResetQuantities() {
-    updateCards((previous) =>
-      previous.map((card) => ({ ...card, quantity: 1 })),
-    )
-  }
-
-  function handleRetry() {
-    setState({ status: 'loading' })
-    setAttempt((previous) => previous + 1)
-  }
 
   const normalizedQuery = query.trim().toLowerCase()
   const visibleCards = cards.filter((card) => {
@@ -85,10 +32,7 @@ function App() {
     return matchesQuery && matchesRarity
   })
   const value = collectionValue(cards)
-
-  useEffect(() => {
-    document.title = `Ma collection (${formatPrice(value)})`
-  }, [value])
+  useDocumentTitle(`Ma collection (${formatPrice(value)})`)
 
   if (state.status === 'loading') {
     return <main className="App">Chargement de la collection…</main>
@@ -98,7 +42,7 @@ function App() {
     return (
       <main className="App">
         <p className="error">{state.message}</p>
-        <button type="button" onClick={handleRetry}>
+        <button type="button" onClick={retry}>
           Réessayer
         </button>
       </main>
@@ -109,7 +53,7 @@ function App() {
     <main className="App">
       <header className="app-header">
         <h1>Ma collection TCG</h1>
-        <button type="button" onClick={handleResetQuantities}>
+        <button type="button" onClick={resetQuantities}>
           Tout à 1 exemplaire
         </button>
       </header>
@@ -123,8 +67,8 @@ function App() {
         />
         <CardGrid
           cards={visibleCards}
-          onQuantityChange={handleQuantityChange}
-          onRemove={handleRemove}
+          onQuantityChange={changeQuantity}
+          onRemove={removeCard}
         />
       </Panel>
     </main>

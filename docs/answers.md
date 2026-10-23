@@ -258,3 +258,27 @@ requête et associe les données nécessaires à chacun. Trois states séparés
 pourraient produire des combinaisons incohérentes, par exemple
 `isLoading === true` avec `error !== null` et une ancienne liste `cards`
 simultanément. La forme discriminée rend ces états absurdes impossibles.
+
+### Q10.1
+Ces fichiers contiennent uniquement du JavaScript et des Hooks personnalisés :
+ils ne contiennent pas de JSX. L’extension `.js` décrit donc correctement
+leur contenu, contrairement à un composant qui rend directement du JSX et
+pourrait utiliser `.jsx`.
+
+### Q10.2
+Deux appels indépendants à `useCards()` déclenchent deux requêtes, car chaque
+appel possède son propre state et son propre effet. Modifier une quantité dans
+la première instance ne modifie pas la seconde. Un Hook personnalisé partage
+sa logique, pas son state : chaque appel crée une instance indépendante.
+
+### Q10.3
+Si le Hook s’appelait `loadCards`, ESLint ne le reconnaîtrait pas comme un
+Hook personnalisé. Il pourrait alors signaler que les Hooks appelés à
+l’intérieur ne respectent pas les règles, et ne garantirait pas leur appel
+uniquement au niveau supérieur d’un composant ou d’un autre Hook. Le préfixe
+`use` permet aux outils de détecter cette convention.
+
+### Q10.4
+`useDocumentTitle` ne renvoie rien car son objectif est son effet secondaire :
+il synchronise le titre du document et restaure l’ancien titre lors du
+cleanup. Le composant appelant n’a pas besoin de recevoir une valeur en retour.
