@@ -259,6 +259,36 @@ pourraient produire des combinaisons incohérentes, par exemple
 `isLoading === true` avec `error !== null` et une ancienne liste `cards`
 simultanément. La forme discriminée rend ces états absurdes impossibles.
 
+### Q11.1
+Sans Context, il faudrait faire descendre `favoriteIds` et `toggleFavorite`
+depuis `App` jusqu’à `CardGrid`, puis jusqu’à `CardTile`, et transmettre
+ensuite `cardId` ainsi que ces données à `FavoriteButton`. Il faudrait aussi
+faire remonter l’intention de bascule du bouton jusqu’à `App` par plusieurs
+callbacks. Cette transmission de props à travers des composants qui ne les
+utilisent pas directement constitue du *prop drilling*.
+
+### Q11.2
+Si `<FavoritesCount />` est rendu en dehors de
+`<FavoritesProvider>`, `useFavorites()` lève l’erreur explicite :
+« useFavorites doit être appelé sous `<FavoritesProvider>` ». Cette erreur
+vaut mieux qu’un `undefined` silencieux, car elle indique immédiatement la
+cause et l’emplacement du mauvais assemblage de l’arbre des composants.
+
+### Q11.3
+Le Context ne possède pas lui-même les favoris. Il fournit une valeur aux
+composants descendants. Les favoris vivent réellement dans le state
+`favoriteIds` de `FavoritesProvider`; le Context permet de partager ce state et
+la fonction `toggleFavorite`.
+
+### Q11.4
+Quand un favori change, les composants consommateurs de `FavoritesContext`,
+notamment le `FavoriteButton` concerné et `FavoritesCount`, sont rendus à
+nouveau. Les autres consommateurs peuvent également être réévalués selon
+l’arbre et la valeur fournie. On réserve donc le Context aux données qui
+changent peu : un changement de sa valeur peut invalider et rerendre de
+nombreux consommateurs, ce qui rendrait son usage coûteux pour des données
+très fréquemment modifiées.
+
 ### Q10.1
 Ces fichiers contiennent uniquement du JavaScript et des Hooks personnalisés :
 ils ne contiennent pas de JSX. L’extension `.js` décrit donc correctement

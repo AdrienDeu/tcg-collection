@@ -1,6 +1,7 @@
 import './index.css'
 import { useState } from 'react'
 import CardGrid from './components/CardGrid.jsx'
+import FavoritesCount from './components/FavoritesCount.jsx'
 import Panel from './components/Panel.jsx'
 import { SearchBar } from './components/SearchBar.jsx'
 import Summary from './components/Summary.jsx'
@@ -53,6 +54,7 @@ function App() {
     <main className="App">
       <header className="app-header">
         <h1>Ma collection TCG</h1>
+        <FavoritesCount />
         <button type="button" onClick={resetQuantities}>
           Tout à 1 exemplaire
         </button>
