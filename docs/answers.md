@@ -353,6 +353,26 @@ valeur reçue est invalide. Utiliser directement `event.target.value`
 permettrait d’introduire une rareté inconnue malgré le domaine et rendrait
 les données moins fiables.
 
+### Q14.1
+Sans `key={selectedCard.id}`, React réutilise la même instance de `CardNotes`
+car le composant garde le même type et la même position dans l’arbre. Son
+state local `note` est donc conservé : la note saisie pour Tortank apparaît
+encore lorsqu’on sélectionne Ptéra. La `key` change l’identité de l’instance
+et force React à en créer une nouvelle, avec une note vide.
+
+### Q14.2
+Il faut stocker `selectedId` plutôt que l’objet `selectedCard`, car l’objet
+est une donnée dérivée de la collection actuelle. Après un changement de
+quantité, la carte peut être recréée par `map` avec un nouvel objet ; en
+conservant seulement l’identifiant, `selectedCard` est automatiquement
+retrouvée dans la version la plus récente de `cards`.
+
+### Q14.3
+Après la suppression, `cards.find((card) => card.id === selectedId)` ne
+trouve plus de carte et `selectedCard` vaut `undefined`. L’expression
+conditionnelle `{selectedCard && ...}` ne rend alors plus `CardNotes`, même si
+`selectedId` conserve encore sa valeur.
+
 ### Q13.1
 Au premier rendu, `inputRef.current` vaut `null`, car le nœud DOM n’est pas
 encore attaché à la ref pendant l’exécution du corps du composant. Dans

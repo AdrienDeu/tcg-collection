@@ -1,6 +1,7 @@
 import './index.css'
 import { useState } from 'react'
 import AddCardForm from './components/AddCardForm.jsx'
+import CardNotes from './components/CardNotes.jsx'
 import CardGrid from './components/CardGrid.jsx'
 import FavoritesCount from './components/FavoritesCount.jsx'
 import Panel from './components/Panel.jsx'
@@ -21,8 +22,10 @@ function App() {
   } = useCards()
   const [query, setQuery] = useState('')
   const [rarity, setRarity] = useState('toutes')
+  const [selectedId, setSelectedId] = useState(null)
 
   const cards = state.status === 'success' ? state.cards : []
+  const selectedCard = cards.find((card) => card.id === selectedId)
 
   const normalizedQuery = query.trim().toLowerCase()
   const visibleCards = cards.filter((card) => {
@@ -65,6 +68,9 @@ function App() {
       <Panel title="Ajouter une carte">
         <AddCardForm onAdd={addCard} />
       </Panel>
+      {selectedCard && (
+        <CardNotes key={selectedCard.id} card={selectedCard} />
+      )}
       <Panel title={`Mes cartes (${visibleCards.length} / ${cards.length})`}>
         <SearchBar
           query={query}
@@ -76,6 +82,8 @@ function App() {
           cards={visibleCards}
           onQuantityChange={changeQuantity}
           onRemove={removeCard}
+          selectedId={selectedId}
+          onSelect={setSelectedId}
         />
       </Panel>
     </main>
