@@ -50,6 +50,13 @@ export function useCards() {
     updateCards((cards) => cards.filter((card) => card.id !== id))
   }
 
+  function addCard(newCard) {
+    updateCards((cards) => [
+      ...cards,
+      { ...newCard, id: crypto.randomUUID() },
+    ])
+  }
+
   function resetQuantities() {
     updateCards((cards) =>
       cards.map((card) => ({ ...card, quantity: 1 })),
@@ -66,6 +73,7 @@ export function useCards() {
     retry,
     changeQuantity,
     removeCard,
+    addCard,
     resetQuantities,
   }
 }

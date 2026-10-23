@@ -1,5 +1,6 @@
 import './index.css'
 import { useState } from 'react'
+import AddCardForm from './components/AddCardForm.jsx'
 import CardGrid from './components/CardGrid.jsx'
 import FavoritesCount from './components/FavoritesCount.jsx'
 import Panel from './components/Panel.jsx'
@@ -15,6 +16,7 @@ function App() {
     retry,
     changeQuantity,
     removeCard,
+    addCard,
     resetQuantities,
   } = useCards()
   const [query, setQuery] = useState('')
@@ -60,6 +62,9 @@ function App() {
         </button>
       </header>
       <Summary cards={cards} />
+      <Panel title="Ajouter une carte">
+        <AddCardForm onAdd={addCard} />
+      </Panel>
       <Panel title={`Mes cartes (${visibleCards.length} / ${cards.length})`}>
         <SearchBar
           query={query}

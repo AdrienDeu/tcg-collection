@@ -312,3 +312,43 @@ uniquement au niveau supérieur d’un composant ou d’un autre Hook. Le préfi
 `useDocumentTitle` ne renvoie rien car son objectif est son effet secondaire :
 il synchronise le titre du document et restaure l’ancien titre lors du
 cleanup. Le composant appelant n’a pas besoin de recevoir une valeur en retour.
+
+### Q12.1
+Sans `event.preventDefault()`, le navigateur applique le comportement HTML
+normal du formulaire : il recharge la page et soumet les champs, généralement
+avec une navigation en `GET` et les valeurs ajoutées dans l’URL. L’état React
+est alors réinitialisé et la carte ajoutée en mémoire disparaît, puisqu’elle
+n’a pas encore été enregistrée sur le serveur.
+
+### Q12.2
+Avec `update('nme', 'x')`, le spread ajoute une nouvelle propriété `nme` dans
+le brouillon, tandis que `name` reste inchangée. Aucune erreur n’est signalée
+car JavaScript autorise les propriétés arbitraires sur les objets et
+JavaScript seul ne connaît pas la forme attendue du brouillon. TypeScript ou
+une validation statique des clés pourrait détecter cette faute.
+
+### Q12.3
+Les erreurs sont entièrement déduites du brouillon courant. Les stocker dans
+un `useState` dupliquerait cette information et pourrait les désynchroniser
+du contenu des champs. Les recalculer à chaque rendu garantit qu’elles
+correspondent toujours au brouillon actuel ; `submitted` suffit à contrôler
+leur visibilité.
+
+### Q12.4
+Le bouton « Vider » doit avoir `type="button"`. Sans ce type, un bouton placé
+dans un formulaire est implicitement de type `submit` : il déclencherait la
+validation et l’envoi au lieu de seulement réinitialiser le brouillon.
+
+### Q12.5
+Ce n’est généralement pas un problème : React est conçu pour rerendre les
+petits composants contrôlés à chaque frappe, et cela maintient l’interface
+cohérente. Il faudrait mesurer avant d’optimiser ; pour un formulaire
+réellement coûteux, on pourrait isoler des composants, mémoriser certains
+calculs ou différer une recherche.
+
+### Q12.6
+`parseRarity(...) ?? "commune"` transforme la chaîne saisie en une valeur
+issue de la liste officielle `RARITIES` et fournit une valeur sûre si la
+valeur reçue est invalide. Utiliser directement `event.target.value`
+permettrait d’introduire une rareté inconnue malgré le domaine et rendrait
+les données moins fiables.
